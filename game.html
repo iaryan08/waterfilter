@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.15.3/css/all.css" type="text/css" media="all" />
+  <style type="text/css" media="all">
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Source Sans Pro";
+    }
+    body {
+      user-select: none;
+    }
+
+    #game {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    #menu {
+      position: absolute;
+      margin-top: 0;
+      left: 0;
+      height: 100vh;
+      width: 100vw;
+      background-color: #21222d;
+      overflow-y: scroll;
+      overflow-x: hidden;
+    }
+
+    #menu-heading ,#lvl-heading {
+      font-size: 25px;
+      padding: 5px 0;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+      text-align: center;
+      background: #ff805d;
+      text-transform: capitalize;
+    }
+
+    .level {
+      transform: translateY(40vh);
+    }
+
+    .lvl {
+      width: 175px;
+      margin: 15px auto;
+      padding: 5px;
+      padding-left: 10px;
+      color: #ff7700;
+      font-size: 20px;
+      border-radius: 5px;
+      transition: .5s ease;
+      border-bottom: 2px solid #ff7700;
+    }
+
+    .lvl:hover {
+      color: #fff;
+      background-color: #f64200;
+    }
+
+    #level {
+      z-index: 1;
+      height: 100vh;
+      width: 100vw;
+      position: absolute;
+      top: 0;
+      left: 0;
+      color: #fff;
+      background-color: #151515;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      display: none;
+    }
+
+
+    .test-tube {
+      position: absolute;
+      height: 130px;
+      width: 40px;
+      border: 2px solid rgb(150,150,150);
+      border-radius: 2px 2px 20px 20px;
+      background-position: 0 10px;
+      overflow: hidden;
+      transition: 1s linear;
+      transform: rotate(0deg);
+    }
+
+@keyframes glassAnim {
+      0%,100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    .colors {
+      position: absolute;
+      left: 0;
+      height: 30px;
+      width: 40px;
+    }
+
+    #won {
+      position: absolute;
+      top: 100px;
+      color: #fb5b65;
+      left: 0;
+      width: 100vw;
+      text-align: center;
+      font-size: 60px;
+      font-weight: 900;
+    }
+
+    #white-bg {
+      position: absolute;
+      left: 0;
+      top: 10px;
+      width: 40px;
+      height: 10px;
+      z-index: 1000;
+      transition: 1s;
+    }
+
+    #colorful-bg {
+      position: absolute;
+      width: 100%;
+      height: 0;
+      z-index: 1000;
+      transition: 1s;
+    }
+
+    #restart {
+      left: 0;
+    }
+
+    #home {
+      left: calc(100vw - 150px);
+    }
+    .control {
+      position: fixed;
+      bottom: 0;
+      width: 100vw;
+      display: flex;
+      justify-content: space-between;
+
+    }
+    .game-buttons,.game-buttons2 {
+      text-align: center;
+      padding: 5px 10px;
+      text-align: center;
+      background-color: #fb5b65;
+      border-radius: 0 10px 0 0;
+    }
+
+    .woncontrols {
+      width: 100%;
+      position: absolute;
+      bottom: 0;
+      padding: 10px;
+    }
+    .game-buttons2 {
+      display: flex;
+      padding: 15px;
+      align-items: center;
+      justify-content: center;
+      margin: 5px;
+      font-size: 1.3em;
+      border-radius: 10px;
+    }
+
+    .game-buttons:nth-child(2) {
+      border-radius: 10px 0 0 0;
+    }
+    #lvl-heading {
+      background-color: #ff3b63;
+    }
+
+    #moves {
+      position: fixed;
+      width: 150px;
+      height: 30px;
+      font-size: 20px;
+    }
+
+    #rules-btn {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      padding: 5px 10px;
+      border-top-left-radius: 10px;
+      background-color: #ff805d;
+    }
+    #rules-page {
+      display: none;
+      z-index: 10;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 100vw;
+      background-color: rgba(0,0,0,0.75);
+      opacity: 0;
+      transition: .2s ease;
+    }
+
+    #rules {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      width: calc(100vw - 125px);
+      background: rgb(15,15,15);
+      border-radius: 10px;
+      color: #ff7700;
+    }
+
+    .rules-box {
+      position: absolute;
+      padding-top: 0;
+      height: 100%;
+      overflow-x: hidden;
+      overflow-y: scroll;
+    }
+    .rules-heading {
+      padding: 10px;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .rules-text ul {
+      list-style: none;
+      text-transform: lowercase;
+    }
+    li {
+      padding: 2px 10px;
+      color: orange;
+    }
+    .rules-text ul li:first-letter {
+      text-transform: capitalize;
+    }
+    .rules-text ul li:nth-child(2n) {
+      background: rgb(14,14,14);
+    }
+
+
+    .close {
+      font-size: 1.5em;
+    }
+    #alert-button:hover {
+      background-color: rgb(254,108,140);
+    }
+  </style>
+  <title>water filter</title>
+</head>
+<body>
+  <div id="game">
+    <div id="menu">
+      <div id="menu-heading">
+        water sort puzzle
+      </div>
+      <div class="level">
+        <div class="lvl" id="easy" onclick="OpenLevel(0);">
+          <i class="far fa-play-circle"></i>
+          Easy
+        </div>
+        <div class="lvl" id="medium" onclick="OpenLevel(1);">
+          <i class="far fa-play-circle"></i>
+          Medium
+        </div>
+        <div class="lvl" id="Difficult" onclick="OpenLevel(2);">
+          <i class="far fa-play-circle"></i>
+          Difficult
+        </div>
+        <div class="lvl" id="hard" onclick="OpenLevel(3)">
+          <i class="far fa-play-circle"></i>
+          hard
+        </div>
+        <div class="lvl" id="very-hard" onclick="OpenLevel(7);">
+          <i class="far fa-play-circle"></i>
+          Very Hard
+        </div>
+      </div>
+
+      <div id="rules-btn" onclick="ShowRules();">
+        <i class="far fa-gamepad-alt"></i>
+        RULES
+      </div>
+    </div>
+    <div id="level"></div>
+    <div id="rules-page">
+      <div id="rules">
+        <div class="rules-heading" id="rules-heading">
+          <h1>Rules</h1>
+          <div class="close" id="back" onclick="HideRules();">
+            <i class="far fa-times"></i>
+          </div>
+        </div>
+        <div class="rules-text" id="rules-text">
+          <ul>
+            <li>There will be some test tubes.</li>
+            <li>your task is to put the liquids with same color together! You can transfer different colored water from one glass to another only if the other glass is empty or its top most layer of water is of the same color as that of the one from which water is to be taken.</li>
+            <li>The glass you have selected will be highlighted to prevent confusion.</li>
+            <li>Restart button will take you back to the beginning of the level, also every time you open the same level the water will be shuffled.</li>
+            </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script type="text/javascript" charset="utf-8">
+    /*
+TO DO:
+A bug with water transfer                                                      done
+Add "You Won"                                                                  done
+Add animations (while holding glass and while transferring water)              done
+Add restart button                                                             done
+*/
+
+    var game, level, color = ["red", "dodgerblue", "#ffff31", "green", "purple", "lightgreen", "lightblue", "orange", "brown", "deeppink"], water = [], w = [], currentLevel, clicked = [], transferring = false, t = false, size = 1, sizechange = 0.05, won = false, moves = 0;
+    var testTubePosition = {
+      0: [[-110,
+        130],
+        [-20,
+          130],
+        [70,
+          130],
+        [-65,
+          320],
+        [15,
+          320]],
+      1: [[-110,
+        130],
+        [-20,
+          130],
+        [70,
+          130],
+        [-110,
+          320],
+        [-20,
+          320],
+        [70,
+          320]],
+      2: [[-140,
+        130],
+        [-60,
+          130],
+        [20,
+          130],
+        [100,
+          130],
+        [-110,
+          320],
+        [-20,
+          320],
+        [70,
+          320]],
+      3: [[-140,
+        130],
+        [-60,
+          130],
+        [20,
+          130],
+        [100,
+          130],
+        [-140,
+          320],
+        [-60,
+          320],
+        [20,
+          320],
+        [100,
+          320]],
+      7: [[-140,
+        100],
+        [-60,
+          100],
+        [20,
+          100],
+        [100,
+          100],
+          
+        [-140,
+          275],
+        [-60,
+          275],
+        [20,
+          275],
+        [100,
+          275],
+        [-140,
+          450],
+        [-60,
+          450],
+        [20,
+          450],
+        [100,
+          450]],
+    }
+
+    window.onload = function() {
+      game = document.getElementById("game");
+      level = document.getElementById("level");
+    }
+
+    window.OpenLevel = function(x) {
+      moves = 0;
+      currentLevel = x;
+      won = false;
+      level.style.display = "block";
+      level.innerHTML = "";
+      water = [];
+      let a = [],
+      c = 0;
+      for (let i = 0; i < x+3; i++) {
+        for (let j = 0; j < 4; j++) {
+          a.push(color[i]);
+        }
+      }
+      a = shuffle(a);
+      for (let i = 0; i < x+3; i++) {
+        water[i] = [];
+        for (let j = 0; j < 4; j++) {
+          water[i].push(a[c]);
+          c++;
+        }
+      }
+      water.push(["transparent", "transparent", "transparent", "transparent"], ["transparent", "transparent", "transparent", "transparent"]);
+      w = water.map((a)=>[...a]);
+      //console.log(water[0]);
+      ApplyInfo();
+    }
+
+    function ApplyInfo(a = water) {
+      if (!won) {
+        let d = 0,
+        heading = ["EASY",
+          "MEDIUM",
+          "Difficult",
+          "HARD",
+          "",
+          "",
+          "",
+          "VERY HARD"][currentLevel];
+        level.innerHTML = `<div id = 'lvl-heading'>${heading}</div>`;
+        for (let i of testTubePosition[currentLevel]) {
+          level.innerHTML += `<div class = "test-tube" style="top:${i[1]}px;left:calc(50vw + ${i[0]}px);transform:rotate(0deg);" onclick="Clicked(${d});">
+          <div class="colors" style = "background-color:${a[d][0]};top:100px;"></div>
+          <div class="colors" style = "background-color:${a[d][1]};top:70px;"></div>
+          <div class="colors" style = "background-color:${a[d][2]};top:40px;"></div>
+          <div class="colors" style = "background-color:${a[d][3]};top:10px;"></div>
+          </div>`;
+          d++;
+        }
+        level.innerHTML += `<div class="control"><div id = "restart" class = "game-buttons" onclick = "Restart();"><i class='bx bx-reset'></i></div><div id = "home" class = "game-buttons" onclick = "ShowMenu();"><i class='bx bx-home-alt' ></i></div></div><div id = "moves">Moves: ${moves}</div>`;
+      }
+    }
+
+    window.Clicked = function(x) {
+      //console.log(x);
+      if (!transferring) {
+        if (clicked.length == 0) {
+          clicked.push(x);
+          document.getElementsByClassName("test-tube")[x].style.transition = "0.2s linear";
+          document.getElementsByClassName("test-tube")[x].style.transform = "scale(1.08)";
+        } else {
+          clicked.push(x);
+          let el = document.getElementsByClassName("test-tube")[clicked[0]];
+          el.style.transform = "scale(1) rotate(0deg)";
+          if (clicked[0] != clicked[1]) {
+            el.style.transition = "1s linear";
+            moves++;
+            document.getElementById("moves").innerHTML = "Moves: "+moves;
+            Transfer(...clicked);
+          }
+          clicked = [];
+        }
+      }
+    }
+
+    function TransferAnim(a, b) {
+      let el = document.getElementsByClassName("test-tube")[a];
+      transferring = true;
+      el.style.zIndex = "100";
+      el.style.top = `calc(${testTubePosition[currentLevel][b][1]}px - 90px)`;
+      el.style.left = `calc(50vw + ${testTubePosition[currentLevel][b][0]}px - 70px)`;
+      el.style.transform = "rotate(75deg)";
+      setTimeout(function() {
+        el.style.transform = "rotate(90deg)";
+      }, 1000)
+      setTimeout(function() {
+        el.style.left = `calc(50vw + ${testTubePosition[currentLevel][a][0]}px)`;
+        el.style.top = `calc(${testTubePosition[currentLevel][a][1]}px)`;
+        el.style.transform = "rotate(0deg)";
+      }, 2000);
+      setTimeout(function() {
+        el.style.zIndex = "0";
+        transferring = false;
+      }, 3000)
+    }
+
+    function Transfer(a, b) {
+      /*
+    a represents the index of the glass from which water is to ne taken
+    b represents the index of the glass to which water is to be transferred
+    constraints:
+    b should have white
+    last element of a = last non-white element in b
+    */
+      if (!water[b].includes("transparent") || water[a] == ["transparent", "transparent", "transparent", "transparent"]) {
+        moves -= 1;
+        document.getElementById("moves").innerHTML = "Moves: "+moves;
+        return;
+      }
+      let p,
+      q,
+      r = false,
+      s = false,
+      count = 0,
+      c = 0;
+      for (let i = 0; i < 4; i++) {
+        if (((water[a][i] != "transparent" && water[a][i+1] == "transparent") || i === 3) && !r) {
+          r = true;
+          p = [water[a][i],
+            i];
+          if (water[a].map(function(x) {
+            if (x == "transparent" || x == p[0]) {
+              return 1;
+            } else {
+              return 0;
+            }
+          }).reduce((x, y)=>x+y) === 4) {
+            p.push(i+1)
+          } else {
+            for (let j = 1; j < 4; j++) {
+              if (i-j >= 0 && water[a][i-j] != p[0]) {
+                p.push(j);
+                break;
+              }
+            }
+          }
+        }
+        if (((water[b][i] != "transparent" && water[b][i+1] == "transparent") || water[b][0] == "transparent") && !s) {
+          s = true;
+          q = [water[b][i],
+            i,
+            water[b].map((x)=>x = (x == "transparent") ? 1: 0).reduce((x, y)=>x+y)];
+        }
+      }
+      //console.log(p);
+      if (q[0] != "transparent" && p[0] != q[0]) {
+        moves -= 1;
+        document.getElementById("moves").innerHTML = "Moves: "+moves;
+        return;
+      }
+      for (let i = 3; i >= 0; i--) {
+        if ((water[a][i] == p[0] || water[a][i] == "transparent") && count < q[2]) {
+          if (water[a][i] == p[0]) {
+            count++;
+          }
+          water[a][i] = "transparent";
+        } else {
+          break;
+        }
+      }
+      //console.log(count);
+      //console.log(q);
+      c = count;
+      setTimeout(function() {
+        WaterDec(p, a, c);
+      }, 1010);
+      setTimeout(function() {
+        WaterInc(p, q, b, c);
+      }, 1010);
+      for (let i = 0; i < 4; i++) {
+        if (water[b][i] == "transparent" && count > 0) {
+          count--;
+          water[b][i] = p[0];
+        }
+      }
+      setTimeout(function() {
+        ApplyInfo();
+      }, 3020);
+      setTimeout(function() {
+        TransferAnim(a, b);
+      }, 10);
+      setTimeout(Won, 3000);
+    }
+
+    function WaterDec(p, a, count) {
+      p[1] = 3-p[1];
+      //console.log(count*30);
+      document.getElementsByClassName("test-tube")[a].innerHTML += `<div id = "white-bg" style = "top:calc(10px + ${p[1]*30}px - 1px);"></div>`;
+      setTimeout(function() {
+        document.getElementById("white-bg").style.height = count*30+1 + "px";
+      }, 50);
+      setTimeout(function() {
+        document.getElementsByClassName("test-tube")[a].innerHTML = `
+        <div class="colors" style = "background-color:${water[a][0]};top:100px;"></div>
+        <div class="colors" style = "background-color:${water[a][1]};top:70px;"></div>
+        <div class="colors" style = "background-color:${water[a][2]};top:40px;"></div>
+        <div class="colors" style = "background-color:${water[a][3]};top:10px;"></div>`;
+      }, 1050);
+    }
+
+    function WaterInc(p, q, b, count) {
+      q[1] = 4-q[1];
+      q[1] -= (q[0] != "transparent" ? 1: 0);
+      document.getElementsByClassName("test-tube")[b].innerHTML += `<div id = "colorful-bg" style = "background-color:${p[0]};top:calc(10px + ${q[1]*30}px);"></div>`;
+      setTimeout(function() {
+        document.getElementById("colorful-bg").style.height = count*30+1 + "px";
+        document.getElementById("colorful-bg").style.top = `calc(10px + ${q[1]*30}px - ${count*30}px)`;
+      }, 50);
+    }
+
+    window.Restart = function() {
+      moves = 0;
+      water = w.map((a)=>[...a]);
+      won = false;
+      ApplyInfo(w);
+    }
+
+    window.ShowMenu = function() {
+      document.getElementById("level").style.display = "none";
+    }
+
+    function Won() {
+      for (let i of water) {
+        if (i[0] != i[1] || i[1] != i[2] || i[2] != i[3]) {
+          return;
+        }
+      }
+      won = true;
+      //console.log("hello");
+      level.innerHTML = `<div id="won">YOU WON</div><div class="woncontrols"><div id = "restart" class = "game-buttons2" onclick = "Restart();"><i class='bx bx-reset'>Restart</i></div><div id = "home" class = "game-buttons2" onclick = "ShowMenu();"><i class='bx bx-home-alt' ></i>Home</div></div>`;
+    }
+
+    function shuffle(x) {
+      let a = [],
+      len = x.length;
+      for (let i = 0; i < len; i++) {
+        let n = Math.floor(Math.random()*x.length);
+        a.push(x[n]);
+        x.splice(n, 1);
+      }
+      return a;
+    }
+
+    window.ShowRules = function() {
+      document.getElementById("rules-page").style.display = "block";
+      setTimeout(function() {
+        document.getElementById("rules-page").style.opacity = "1";
+      }, 50);
+    }
+
+    window.HideRules = function() {
+      setTimeout(function() {
+        document.getElementById("rules-page").style.display = "none";
+      }, 500);
+      document.getElementById("rules-page").style.opacity = "0";
+    }
+  </script>
+</body>
+</html>
